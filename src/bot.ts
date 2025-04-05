@@ -3,6 +3,7 @@ import { outgoingRequests } from "./middleware.js";
 import { Request, User } from "./types.js";
 
 import { assert } from "chai";
+import crypto from "crypto";
 import { Api, Bot, Context, RawApi } from "grammy";
 
 /**
