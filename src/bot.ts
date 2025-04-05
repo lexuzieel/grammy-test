@@ -58,7 +58,7 @@ export class TestBot<
    * Get the log of outgoing requests.
    * @returns The complete log of outgoing requests.
    */
-  protected get log() {
+  public get requests() {
     if (!outgoingRequests.has(this.token)) {
       outgoingRequests.set(this.token, []);
     }
@@ -72,7 +72,7 @@ export class TestBot<
    * @returns The last n requests from the log.
    */
   protected last(n: number = 1) {
-    return this.log.length >= n ? this.log.slice(-n) : this.log;
+    return this.requests.length >= n ? this.requests.slice(-n) : this.requests;
   }
 
   /**
