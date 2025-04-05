@@ -15,7 +15,7 @@ test.group("Composer", async (group) => {
     composer = new Composer(bot);
   });
 
-  test("can change user information", async ({ assert }) => {
+  test("can set user before sending request", async ({ assert }) => {
     const id = Math.floor(Math.random() * 1000000);
     const firstName = "John";
     const lastName = "Doe";

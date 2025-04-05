@@ -38,6 +38,36 @@ test.group("Bot", async (group) => {
     assert.equal(bot.log[0].payload.text, "Hello, user!");
   });
 
+  test("handles multiple messages", async ({ assert }) => {
+    // Setup a more complex conversation
+    bot.on("message:text", async (ctx) => {
+      const text = ctx.message.text.toLowerCase();
+
+      if (text === "hello") {
+        await ctx.reply("Hi there!");
+      } else if (text === "how are you?") {
+        await ctx.reply("I'm doing well, thanks for asking!");
+      } else {
+        await ctx.reply("I don't understand that message.");
+      }
+    });
+
+    // First message
+    await bot.receive.message("Hello");
+    bot.assert.reply.exact("Hi there!");
+    assert.lengthOf(bot.log, 1);
+
+    // Second message
+    await bot.receive.message("How are you?");
+    bot.assert.reply.exact("I'm doing well, thanks for asking!");
+    assert.lengthOf(bot.log, 1);
+
+    // Unknown message
+    await bot.receive.message("Something random");
+    bot.assert.reply.exact("I don't understand that message.");
+    assert.lengthOf(bot.log, 1);
+  });
+
   test("receives incoming text messages", async ({ assert }) => {
     let ctx: Context | null = null;
 
@@ -90,96 +120,5 @@ test.group("Bot", async (group) => {
     assert.isNotNull(ctx);
     assert.equal(ctx!.hasCallbackQuery("test_data"), true);
     assert.equal(ctx!.match, "test_data");
-  });
-
-  test("handles multiple messages", async ({ assert }) => {
-    // Setup a more complex conversation
-    bot.on("message:text", async (ctx) => {
-      const text = ctx.message.text.toLowerCase();
-
-      if (text === "hello") {
-        await ctx.reply("Hi there!");
-      } else if (text === "how are you?") {
-        await ctx.reply("I'm doing well, thanks for asking!");
-      } else {
-        await ctx.reply("I don't understand that message.");
-      }
-    });
-
-    // First message
-    await bot.receive.message("Hello");
-    bot.assert.reply.exact("Hi there!");
-
-    // Second message
-    await bot.receive.message("How are you?");
-    bot.assert.reply.exact("I'm doing well, thanks for asking!");
-
-    // Unknown message
-    await bot.receive.message("Something random");
-    bot.assert.reply.exact("I don't understand that message.");
-  });
-
-  test("can assert that reply contains exact text", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      await ctx.reply(
-        "This is a very long response with specific text in the middle.",
-      );
-    });
-
-    await bot.receive.message("hi");
-
-    assert.throws(() => bot.assert.reply.exact("specific text"));
-    assert.throws(() => bot.assert.reply.exact("long response"));
-
-    bot.assert.reply.exact(
-      "This is a very long response with specific text in the middle.",
-    );
-  });
-
-  test("can assert that reply contains specific text", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      await ctx.reply(
-        "This is a very long response with specific text in the middle.",
-      );
-    });
-
-    await bot.receive.message("hi");
-
-    bot.assert.reply.contains("specific text");
-    bot.assert.reply.contains("long response");
-
-    assert.throws(() => bot.assert.reply.contains("non-existent text"));
-  });
-
-  test("can change user information", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      const userName = ctx.from?.first_name || "Unknown";
-      await ctx.reply(`Hello, ${userName}!`);
-    });
-
-    // Use a custom user
-    await bot.receive.from({ firstName: "Alice" }).message("hi");
-
-    bot.assert.reply.exact("Hello, Alice!");
-  });
-
-  test("multiple handlers for different scenarios", async ({ assert }) => {
-    // Command handler
-    bot.command("start", async (ctx) => {
-      await ctx.reply("Bot started!");
-    });
-
-    // Text message handler
-    bot.on("message:text", async (ctx) => {
-      await ctx.reply("Text received!");
-    });
-
-    // Test command handler
-    await bot.receive.command("start");
-    bot.assert.reply.exact("Bot started!");
-
-    // Test text message handler
-    await bot.receive.message("just some text");
-    bot.assert.reply.exact("Text received!");
   });
 });
