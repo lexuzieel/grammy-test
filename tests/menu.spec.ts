@@ -40,6 +40,12 @@ test.group("Menu", (group) => {
 
     bot.assert.reply.exact("Pick an option");
 
+    bot.assert.button.exact("Option 1");
+    bot.assert.button.exact("Option 2");
+
+    assert.throws(() => bot.assert.button.exact("Option 3"));
+    assert.throws(() => bot.assert.button.contains("Option 3"));
+
     await bot.receive.button("Option 1");
 
     bot.assert.reply.exact("Option 1 clicked");
@@ -56,7 +62,7 @@ test.group("Menu", (group) => {
     assert.typeOf(
       error,
       "Error",
-      "Pressing non-existent button should throw an error",
+      "Pressing non-existent button should throw an error"
     );
 
     await bot.receive.command("start");

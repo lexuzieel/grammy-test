@@ -1,3 +1,4 @@
+import { InlineKeyboardButton } from "grammy/types";
 import { Composer } from "./composer.js";
 import { outgoingRequests } from "./middleware.js";
 import { Request, User } from "./types.js";
@@ -107,6 +108,34 @@ export class TestBot<
             assert.fail(
               `No message was sent with text containing '${text}'\n\nGot: ${logText}`,
             );
+          }
+        },
+      },
+      button: {
+        exact: (text: string) => {
+          if (
+            !this.log.find((r) => {
+              const button = (r.payload.reply_markup?.inline_keyboard ?? [])
+                .flat()
+                .find((b: InlineKeyboardButton) => b.text === text);
+
+              return button;
+            })
+          ) {
+            assert.fail(`No button with text '${text}' found`);
+          }
+        },
+        contains: (text: string) => {
+          if (
+            !this.log.find((r) => {
+              const button = (r.payload.reply_markup?.inline_keyboard ?? [])
+                .flat()
+                .find((b: InlineKeyboardButton) => b.text.includes(text));
+
+              return button;
+            })
+          ) {
+            assert.fail(`No button with text containing '${text}' found`);
           }
         },
       },
