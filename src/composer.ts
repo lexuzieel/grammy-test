@@ -3,6 +3,7 @@ import { Generator } from "./generator.js";
 import { User } from "./types.js";
 
 import { Context } from "grammy";
+import { InlineKeyboardButton } from "grammy/types";
 
 /**
  * Incoming bot messages composer.
@@ -38,5 +39,22 @@ export class Composer {
   public async callbackQuery(data: string) {
     this.bot.clearLog();
     return this.bot.handleUpdate(this.generator.callbackQuery(data));
+  }
+
+  public async button(text: string) {
+    for (const r of this.bot.log) {
+      const button = (r.payload.reply_markup?.inline_keyboard ?? [])
+        .flat()
+        .find((b: InlineKeyboardButton) => b.text === text);
+
+      if (button) {
+        this.bot.clearLog();
+        return this.bot.handleUpdate(
+          this.generator.callbackQuery(button.callback_data),
+        );
+      } else {
+        throw new Error(`No button with text '${text}' found`);
+      }
+    }
   }
 }
