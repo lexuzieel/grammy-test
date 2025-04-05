@@ -1,5 +1,5 @@
 import { TestBot } from "../src/bot.js";
-import { outgoingRequests, testMiddleware } from "../src/middleware.js";
+import { outgoingRequests } from "../src/middleware.js";
 import { createBot } from "./common.js";
 
 import { test } from "@japa/runner";
