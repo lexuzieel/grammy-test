@@ -34,4 +34,9 @@ export class Composer {
     this.bot.clearLog();
     return this.bot.handleUpdate(this.generator.command(command, args));
   }
+
+  public async callbackQuery(data: string) {
+    this.bot.clearLog();
+    return this.bot.handleUpdate(this.generator.callbackQuery(data));
+  }
 }

@@ -74,4 +74,25 @@ export class Generator {
       },
     };
   }
+
+  public callbackQuery(data: string): Update {
+    return {
+      update_id: this.id,
+      callback_query: {
+        id: this.id.toString(),
+        message: {
+          date: this.date,
+          chat: {
+            type: "private",
+            ...this.from, // only this is actually required
+          },
+          message_id: this.id,
+          from: this.from,
+        },
+        from: this.from,
+        chat_instance: this.from.id.toString(),
+        data,
+      },
+    };
+  }
 }

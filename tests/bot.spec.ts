@@ -78,6 +78,20 @@ test.group("Bot", async (group) => {
     assert.equal(ctx!.match, "hello world");
   });
 
+  test("receives callback queries", async ({ assert }) => {
+    let ctx: Context | null = null;
+
+    bot.on("callback_query", async (c) => {
+      ctx = c;
+    });
+
+    await bot.receive.callbackQuery("test_data");
+
+    assert.isNotNull(ctx);
+    assert.equal(ctx!.hasCallbackQuery("test_data"), true);
+    assert.equal(ctx!.match, "test_data");
+  });
+
   test("handles multiple messages", async ({ assert }) => {
     // Setup a more complex conversation
     bot.on("message:text", async (ctx) => {
