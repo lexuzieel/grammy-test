@@ -26,10 +26,12 @@ export class Composer {
   }
 
   public async message(text: string) {
+    this.bot.clearLog();
     return this.bot.handleUpdate(this.generator.message(text));
   }
 
   public async command(command: string, ...args: string[]) {
+    this.bot.clearLog();
     return this.bot.handleUpdate(this.generator.command(command, args));
   }
 }

@@ -58,7 +58,7 @@ export class TestBot<
    * Get the log of outgoing requests.
    * @returns The complete log of outgoing requests.
    */
-  public get requests() {
+  public get log() {
     if (!outgoingRequests.has(this.token)) {
       outgoingRequests.set(this.token, []);
     }
@@ -66,39 +66,46 @@ export class TestBot<
     return outgoingRequests.get(this.token) as Request[];
   }
 
-  /**
-   * Get the last n requests from the log.
-   * @param n - The number of requests to get.
-   * @returns The last n requests from the log.
-   */
-  protected last(n: number = 1) {
-    return this.requests.length >= n ? this.requests.slice(-n) : this.requests;
+  public clearLog() {
+    outgoingRequests.set(this.token, []);
+  }
+
+  public get lastRequest() {
+    return this.log.length > 0 ? this.log[0] : undefined;
   }
 
   /**
    * Use this object to assert outgoing bot messages.
    */
   public get assert() {
-    const latest = this.last(3).reverse();
-    const latestText = latest.map((r) => r.payload.text).join("\n");
     return {
       /**
        * Assert bot messages that were sent with `ctx.reply`.
        */
       reply: {
         exact: (text: string) => {
-          if (!latest.find((r) => r.payload.text === text)) {
+          if (!this.log.find((r) => r.payload.text === text)) {
+            const logText = this.log
+              .reverse()
+              .map((r) => r.payload.text)
+              .join("\n");
+
             assert.fail(
-              latestText,
+              logText,
               text,
               `No message was sent with exact text '${text}'`,
             );
           }
         },
         contains: (text: string) => {
-          if (!latest.find((r) => r.payload.text.includes(text))) {
+          if (!this.log.find((r) => r.payload.text.includes(text))) {
+            const logText = this.log
+              .reverse()
+              .map((r) => r.payload.text)
+              .join("\n");
+
             assert.fail(
-              `No message was sent with text containing '${text}'\n\nGot: ${latestText}`,
+              `No message was sent with text containing '${text}'\n\nGot: ${logText}`,
             );
           }
         },

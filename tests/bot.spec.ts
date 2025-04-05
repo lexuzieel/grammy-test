@@ -32,10 +32,10 @@ test.group("Bot", async (group) => {
 
     await bot.receive.message("hello");
 
-    assert.lengthOf(bot.requests, 1);
-    assert.equal(bot.requests[0].method, "sendMessage");
-    assert.equal(bot.requests[0].payload.chat_id, bot.user.id);
-    assert.equal(bot.requests[0].payload.text, "Hello, user!");
+    assert.lengthOf(bot.log, 1);
+    assert.equal(bot.log[0].method, "sendMessage");
+    assert.equal(bot.log[0].payload.chat_id, bot.user.id);
+    assert.equal(bot.log[0].payload.text, "Hello, user!");
   });
 
   test("receives incoming text messages", async ({ assert }) => {
