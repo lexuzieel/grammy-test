@@ -12,7 +12,7 @@
     "build": "tsc",
     "test": "tsx bin/test.ts",
     "test:watch": "nodemon --exec npm run test",
-    "test:coverage": "c8 npm run test",
+    "test:coverage": "c8 --reporter=lcov --include src npm run test",
     "test:coverage:watch": "nodemon --exec npm run test:coverage"
   },
   "keywords": [
