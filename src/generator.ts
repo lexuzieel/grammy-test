@@ -52,7 +52,7 @@ export class Generator {
     };
   }
 
-  public command(command: string): Update {
+  public command(command: string, args: string[] = []): Update {
     return {
       update_id: this.id,
       message: {
@@ -63,11 +63,11 @@ export class Generator {
         },
         message_id: this.id,
         from: this.from,
-        text: command,
+        text: [`/${command}`, ...args].join(" "),
         entities: [
           {
             offset: 0,
-            length: command.length,
+            length: command.length + 1,
             type: "bot_command",
           },
         ],

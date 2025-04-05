@@ -29,7 +29,7 @@ export class Composer {
     return this.bot.handleUpdate(this.generator.message(text));
   }
 
-  public async command(command: string) {
-    return this.bot.handleUpdate(this.generator.command(command));
+  public async command(command: string, ...args: string[]) {
+    return this.bot.handleUpdate(this.generator.command(command, args));
   }
 }
