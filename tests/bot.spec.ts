@@ -39,28 +39,43 @@ test.group("Bot", async (group) => {
   });
 
   test("receives incoming text messages", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      assert.equal(ctx.message.text, "hello");
+    let ctx: Context | null = null;
+
+    bot.on("message", async (c) => {
+      ctx = c;
     });
 
     await bot.receive.message("hello");
+
+    assert.isNotNull(ctx);
+    assert.equal(ctx!.message?.text, "hello");
   });
 
   test("receives incoming commands", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      assert.equal(ctx.message.text, "/test_command");
+    let ctx: Context | null = null;
+
+    bot.on("message", async (c) => {
+      ctx = c;
     });
 
     await bot.receive.command("test_command");
+
+    assert.isNotNull(ctx);
+    assert.equal(ctx!.message?.text, "/test_command");
   });
 
   test("receives incoming commands with arguments", async ({ assert }) => {
-    bot.on("message", async (ctx) => {
-      assert.equal(ctx.hasCommand("test_command"), true);
-      assert.equal(ctx.match, "hello world");
+    let ctx: Context | null = null;
+
+    bot.on("message", async (c) => {
+      ctx = c;
     });
 
     await bot.receive.command("test_command", "hello", "world");
+
+    assert.isNotNull(ctx);
+    assert.equal(ctx!.hasCommand("test_command"), true);
+    assert.equal(ctx!.match, "hello world");
   });
 
   test("handles multiple messages", async ({ assert }) => {
