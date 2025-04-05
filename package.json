@@ -1,0 +1,33 @@
+{
+  "name": "grammy-test",
+  "version": "0.1.0",
+  "description": "Testing framework for grammY",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "grammy",
+    "telegram",
+    "bot",
+    "testing",
+    "framework"
+  ],
+  "peerDependencies": {
+    "grammy": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "grammy": "^1.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/chai": "^5.2.1",
+    "chai": "^5.2.0"
+  }
+}
