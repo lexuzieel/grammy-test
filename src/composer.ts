@@ -45,7 +45,9 @@ export class Composer {
     for (const r of this.bot.requests) {
       const button = (r.payload.reply_markup?.inline_keyboard ?? [])
         .flat()
-        .find((b: InlineKeyboardButton) => b.text.includes(text));
+        .find((b: InlineKeyboardButton) =>
+          b.text.toLowerCase().includes(text.toLowerCase())
+        );
 
       if (button) {
         this.bot.resetRequests();

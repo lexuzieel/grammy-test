@@ -109,7 +109,11 @@ export class TestBot<
          * Match a substring of a message that was sent with `ctx.reply`.
          */
         contains: (text: string) => {
-          if (!this.requests.find((r) => r.payload.text.includes(text))) {
+          if (
+            !this.requests.find((r) =>
+              r.payload.text.toLowerCase().includes(text.toLowerCase())
+            )
+          ) {
             const logText = this.requests
               .reverse()
               .map((r) => r.payload.text)
@@ -129,7 +133,9 @@ export class TestBot<
           !this.requests.find((r) => {
             const button = (r.payload.reply_markup?.inline_keyboard ?? [])
               .flat()
-              .find((b: InlineKeyboardButton) => b.text.includes(text));
+              .find((b: InlineKeyboardButton) =>
+                b.text.toLowerCase().includes(text.toLowerCase())
+              );
 
             return button;
           })
