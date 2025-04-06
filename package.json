@@ -10,10 +10,12 @@
   ],
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "test": "tsx bin/test.ts",
     "test:watch": "tsx --watch bin/test.ts",
     "test:coverage": "c8 --reporter=lcov --include src npm run test",
-    "test:coverage:watch": "nodemon --exec c8 --include src npm run test"
+    "test:coverage:watch": "nodemon --exec c8 --include src npm run test",
+    "publish": "npm run build && npm publish"
   },
   "keywords": [
     "grammy",
