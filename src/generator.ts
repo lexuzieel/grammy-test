@@ -26,6 +26,10 @@ export class Generator {
     return Math.floor(Date.now() / 1000);
   }
 
+  private get randomId(): number {
+    return Math.floor(Math.random() * 1000000);
+  }
+
   private get from() {
     return {
       is_bot: false,
@@ -75,18 +79,18 @@ export class Generator {
     };
   }
 
-  public callbackQuery(data: string): Update {
+  public callbackQuery(data: string, messageId?: number): Update {
     return {
       update_id: this.id,
       callback_query: {
-        id: this.id.toString(),
+        id: this.randomId.toString(),
         message: {
           date: this.date,
           chat: {
             type: "private",
             ...this.from, // only this is actually required
           },
-          message_id: this.id,
+          message_id: messageId ?? this.id,
           from: this.from,
         },
         from: this.from,

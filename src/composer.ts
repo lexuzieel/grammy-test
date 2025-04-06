@@ -27,30 +27,30 @@ export class Composer {
   }
 
   public async message(text: string) {
-    this.bot.clearLog();
-    return this.bot.handleUpdate(this.generator.message(text));
+    this.bot.resetRequests();
+    await this.bot.handleUpdate(this.generator.message(text));
   }
 
   public async command(command: string, ...args: string[]) {
-    this.bot.clearLog();
-    return this.bot.handleUpdate(this.generator.command(command, args));
+    this.bot.resetRequests();
+    await this.bot.handleUpdate(this.generator.command(command, args));
   }
 
   public async callbackQuery(data: string) {
-    this.bot.clearLog();
-    return this.bot.handleUpdate(this.generator.callbackQuery(data));
+    this.bot.resetRequests();
+    await this.bot.handleUpdate(this.generator.callbackQuery(data));
   }
 
   public async button(text: string) {
-    for (const r of this.bot.log) {
+    for (const r of this.bot.requests) {
       const button = (r.payload.reply_markup?.inline_keyboard ?? [])
         .flat()
-        .find((b: InlineKeyboardButton) => b.text === text);
+        .find((b: InlineKeyboardButton) => b.text.includes(text));
 
       if (button) {
-        this.bot.clearLog();
-        return this.bot.handleUpdate(
-          this.generator.callbackQuery(button.callback_data),
+        this.bot.resetRequests();
+        await this.bot.handleUpdate(
+          this.generator.callbackQuery(button.callback_data)
         );
       } else {
         throw new Error(`No button with text '${text}' found`);

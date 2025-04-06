@@ -32,10 +32,10 @@ test.group("Bot", async (group) => {
 
     await bot.receive.message("hello");
 
-    assert.lengthOf(bot.log, 1);
-    assert.equal(bot.log[0].method, "sendMessage");
-    assert.equal(bot.log[0].payload.chat_id, bot.user.id);
-    assert.equal(bot.log[0].payload.text, "Hello, user!");
+    assert.lengthOf(bot.requests, 1);
+    assert.equal(bot.requests[0].method, "sendMessage");
+    assert.equal(bot.requests[0].payload.chat_id, bot.user.id);
+    assert.equal(bot.requests[0].payload.text, "Hello, user!");
   });
 
   test("handles multiple messages", async ({ assert }) => {
@@ -55,17 +55,17 @@ test.group("Bot", async (group) => {
     // First message
     await bot.receive.message("Hello");
     bot.assert.reply.exact("Hi there!");
-    assert.lengthOf(bot.log, 1);
+    assert.lengthOf(bot.requests, 1);
 
     // Second message
     await bot.receive.message("How are you?");
     bot.assert.reply.exact("I'm doing well, thanks for asking!");
-    assert.lengthOf(bot.log, 1);
+    assert.lengthOf(bot.requests, 1);
 
     // Unknown message
     await bot.receive.message("Something random");
     bot.assert.reply.exact("I don't understand that message.");
-    assert.lengthOf(bot.log, 1);
+    assert.lengthOf(bot.requests, 1);
   });
 
   test("receives incoming text messages", async ({ assert }) => {

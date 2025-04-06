@@ -40,11 +40,10 @@ test.group("Menu", (group) => {
 
     bot.assert.reply.exact("Pick an option");
 
-    bot.assert.button.exact("Option 1");
-    bot.assert.button.exact("Option 2");
+    bot.assert.button("Option 1");
+    bot.assert.button("Option 2");
 
-    assert.throws(() => bot.assert.button.exact("Option 3"));
-    assert.throws(() => bot.assert.button.contains("Option 3"));
+    assert.throws(() => bot.assert.button("Option 3"));
 
     await bot.receive.button("Option 1");
 

@@ -15,7 +15,7 @@ import { Api, Bot, Context, RawApi } from "grammy";
  */
 export class TestBot<
   C extends Context = Context,
-  A extends Api = Api<RawApi>,
+  A extends Api = Api<RawApi>
 > extends Bot<C, A> {
   public user: User;
 
@@ -43,11 +43,11 @@ export class TestBot<
   }
 
   /**
-   * Use this object to simulate incoming messages from the user.
+   * Use this object to emulate incoming messages from the user.
    *
    * @example
    * ```ts
-   * await bot.receive.command("/start");
+   * await bot.receive.command("start");
    * await bot.receive.message("Hello, world!");
    * ```
    */
@@ -56,10 +56,13 @@ export class TestBot<
   }
 
   /**
-   * Get the log of outgoing requests.
-   * @returns The complete log of outgoing requests.
+   * A list of captured outgoing requests
+   * since the last call input from the user.
+   *
+   * Note: This list gets cleared on each call to a `receive.*` method,
+   * such as `bot.receive.message()`, `bot.receive.command()`, etc.
    */
-  public get log() {
+  public get requests() {
     if (!outgoingRequests.has(this.token)) {
       outgoingRequests.set(this.token, []);
     }
@@ -67,26 +70,30 @@ export class TestBot<
     return outgoingRequests.get(this.token) as Request[];
   }
 
-  public clearLog() {
+  /**
+   * Clear the list of captured outgoing requests.
+   *
+   * This method is used internally by the `receive.*` methods.
+   */
+  public resetRequests() {
     outgoingRequests.set(this.token, []);
   }
 
-  public get lastRequest() {
-    return this.log.length > 0 ? this.log[0] : undefined;
-  }
-
   /**
-   * Use this object to assert outgoing bot messages.
+   * Use this object to assert the updates sent by the bot.
    */
   public get assert() {
     return {
       /**
-       * Assert bot messages that were sent with `ctx.reply`.
+       * Assert a message that was sent with `ctx.reply`.
        */
       reply: {
+        /**
+         * Match the exact text of a message that was sent with `ctx.reply`.
+         */
         exact: (text: string) => {
-          if (!this.log.find((r) => r.payload.text === text)) {
-            const logText = this.log
+          if (!this.requests.find((r) => r.payload.text === text)) {
+            const logText = this.requests
               .reverse()
               .map((r) => r.payload.text)
               .join("\n");
@@ -94,50 +101,41 @@ export class TestBot<
             assert.fail(
               logText,
               text,
-              `No message was sent with exact text '${text}'`,
+              `No message was sent with exact text '${text}'`
             );
           }
         },
+        /**
+         * Match a substring of a message that was sent with `ctx.reply`.
+         */
         contains: (text: string) => {
-          if (!this.log.find((r) => r.payload.text.includes(text))) {
-            const logText = this.log
+          if (!this.requests.find((r) => r.payload.text.includes(text))) {
+            const logText = this.requests
               .reverse()
               .map((r) => r.payload.text)
               .join("\n");
 
             assert.fail(
-              `No message was sent with text containing '${text}'\n\nGot: ${logText}`,
+              `No message was sent with text containing '${text}'\n\nGot: ${logText}`
             );
           }
         },
       },
-      button: {
-        exact: (text: string) => {
-          if (
-            !this.log.find((r) => {
-              const button = (r.payload.reply_markup?.inline_keyboard ?? [])
-                .flat()
-                .find((b: InlineKeyboardButton) => b.text === text);
+      /**
+       * Assert an inline button that was sent with `reply_markup`.
+       */
+      button: (text: string) => {
+        if (
+          !this.requests.find((r) => {
+            const button = (r.payload.reply_markup?.inline_keyboard ?? [])
+              .flat()
+              .find((b: InlineKeyboardButton) => b.text.includes(text));
 
-              return button;
-            })
-          ) {
-            assert.fail(`No button with text '${text}' found`);
-          }
-        },
-        contains: (text: string) => {
-          if (
-            !this.log.find((r) => {
-              const button = (r.payload.reply_markup?.inline_keyboard ?? [])
-                .flat()
-                .find((b: InlineKeyboardButton) => b.text.includes(text));
-
-              return button;
-            })
-          ) {
-            assert.fail(`No button with text containing '${text}' found`);
-          }
-        },
+            return button;
+          })
+        ) {
+          assert.fail(`No button with text '${text}' found`);
+        }
       },
     };
   }

@@ -22,11 +22,11 @@ test.group("Middleware", async (group) => {
       await ctx.reply("Test message");
     });
 
-    assert.isEmpty(bot.log);
+    assert.isEmpty(bot.requests);
 
     await bot.receive.message("hello");
 
-    assert.lengthOf(bot.log, 1);
+    assert.lengthOf(bot.requests, 1);
   });
 
   test("skips duplicate requests", async ({ assert }) => {
@@ -40,12 +40,12 @@ test.group("Middleware", async (group) => {
       await ctx.reply("Unique");
     });
 
-    assert.isEmpty(bot.log);
+    assert.isEmpty(bot.requests);
 
     await bot.receive.message("hello");
 
-    assert.lengthOf(bot.log, 2);
-    assert.equal(bot.log[0].payload.text, "Duplicate");
-    assert.equal(bot.log[1].payload.text, "Unique");
+    assert.lengthOf(bot.requests, 2);
+    assert.equal(bot.requests[0].payload.text, "Duplicate");
+    assert.equal(bot.requests[1].payload.text, "Unique");
   });
 });
