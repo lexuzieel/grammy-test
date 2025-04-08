@@ -92,7 +92,11 @@ export class TestBot<
          * Match the exact text of a message that was sent with `ctx.reply`.
          */
         exact: (text: string) => {
-          if (!this.requests.find((r) => r.payload.text === text)) {
+          if (
+            !this.requests.find(
+              (r) => r.payload.text && r.payload.text === text
+            )
+          ) {
             const logText = this.requests
               .reverse()
               .map((r) => r.payload.text)
@@ -110,8 +114,10 @@ export class TestBot<
          */
         contains: (text: string) => {
           if (
-            !this.requests.find((r) =>
-              r.payload.text.toLowerCase().includes(text.toLowerCase())
+            !this.requests.find(
+              (r) =>
+                r.payload.text &&
+                r.payload.text.toLowerCase().includes(text.toLowerCase())
             )
           ) {
             const logText = this.requests
