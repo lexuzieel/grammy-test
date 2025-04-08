@@ -80,6 +80,13 @@ export class TestBot<
   }
 
   /**
+   * Format outgoing requests as a list.
+   */
+  protected get logText() {
+    return this.requests.map((r) => r.payload.text).join("\n");
+  }
+
+  /**
    * Use this object to assert the updates sent by the bot.
    */
   public get assert() {
@@ -97,13 +104,8 @@ export class TestBot<
               (r) => r.payload.text && r.payload.text === text
             )
           ) {
-            const logText = this.requests
-              .reverse()
-              .map((r) => r.payload.text)
-              .join("\n");
-
             assert.fail(
-              logText,
+              this.logText,
               text,
               `No message was sent with exact text '${text}'`
             );
@@ -120,13 +122,8 @@ export class TestBot<
                 r.payload.text.toLowerCase().includes(text.toLowerCase())
             )
           ) {
-            const logText = this.requests
-              .reverse()
-              .map((r) => r.payload.text)
-              .join("\n");
-
             assert.fail(
-              `No message was sent with text containing '${text}'\n\nGot: ${logText}`
+              `No message was sent with text containing '${text}'\n\nGot: ${this.logText}`
             );
           }
         },
