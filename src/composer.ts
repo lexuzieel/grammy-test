@@ -54,9 +54,10 @@ export class Composer {
         await this.bot.handleUpdate(
           this.generator.callbackQuery(button.callback_data)
         );
-      } else {
-        throw new Error(`No button with text '${text}' found`);
+        return;
       }
     }
+
+    throw new Error(`No button with text '${text}' found`);
   }
 }
