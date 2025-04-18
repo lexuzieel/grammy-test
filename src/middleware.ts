@@ -37,7 +37,10 @@ export const captureRequests: Middleware<Context> = async (ctx, next) => {
       });
     }
 
-    return { ok: true } as any;
+    return {
+      ok: true,
+      result: ctx.update.message || ctx.update.callback_query,
+    } as any;
   });
 
   return next();
